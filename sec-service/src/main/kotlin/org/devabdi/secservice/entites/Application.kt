@@ -14,7 +14,7 @@ class Application(
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long? = null
+    val id: Long? = null
 
     var name: String = name.trim().replace(" ", "_").uppercase()
         set(value) {

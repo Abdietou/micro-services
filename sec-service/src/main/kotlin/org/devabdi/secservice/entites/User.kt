@@ -29,7 +29,7 @@ class User(
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long? = null
+    val id: Long? = null
 
     var username: String = username.trim().lowercase()
         set(value) {
