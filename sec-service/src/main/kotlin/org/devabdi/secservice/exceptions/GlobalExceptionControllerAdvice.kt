@@ -1,6 +1,6 @@
 package org.devabdi.secservice.exceptions
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import jakarta.servlet.http.HttpServletRequest
 import org.devabdi.secservice.config.JacksonConfig
 import org.devabdi.secservice.dto.ErrorMessageDTO
 import org.devabdi.secservice.exceptions.application.AppNotFoundException
@@ -26,16 +26,22 @@ class GlobalExceptionControllerAdvice {
     @ExceptionHandler(IllegalArgumentException::class)
     fun handleIllegalArgumentException(ex: IllegalArgumentException, request: WebRequest): ResponseEntity<String> {
         //val stackTraceElement = ex.stackTrace.firstOrNull()
+        val servletRequest = request as? ServletWebRequest
+        val httpServletRequest = servletRequest?.request
 
         val errorMessageDto = ErrorMessageDTO(
             status = HttpStatus.BAD_REQUEST.value(),
             message = ex.message ?: "Invalid argument",
-            path = (request as ServletWebRequest).request.requestURI,
+            path = servletRequest?.request?.requestURI,
             timestamp = OffsetDateTime.now(),
-            method = request.httpMethod.toString(),
+            method = servletRequest?.httpMethod.toString(),
             exceptionType = ex.javaClass.simpleName,
             userId = "",
-            errorLocation = getErrorLocaltion(ex)
+            errorLocation = getErrorLocaltion(ex),
+            userAgent = servletRequest?.getHeader("User-Agent") ?: "Unknown",
+            contentType = httpServletRequest?.contentType ?: "Unknown",
+            serverName = httpServletRequest?.serverName ?: "Unknown",
+            ip = httpServletRequest?.let { getClientIp(it) } ?: "Unknown"
         )
 
         errorLog(errorMessageDto.exceptionType, errorMessageDto.toString())
@@ -45,15 +51,22 @@ class GlobalExceptionControllerAdvice {
 
     @ExceptionHandler(UserAlreadyExistsException::class)
     fun handleUserAlreadyExistsException(ex: UserAlreadyExistsException, request: WebRequest): ResponseEntity<String> {
+        val servletRequest = request as? ServletWebRequest
+        val httpServletRequest = servletRequest?.request
+
         val errorMessageDto = ErrorMessageDTO(
             status = HttpStatus.BAD_REQUEST.value(),
             message = ex.message ?: "Invalid username",
-            path = (request as ServletWebRequest).request.requestURI,
+            path = servletRequest?.request?.requestURI,
             timestamp = OffsetDateTime.now(),
-            method = request.httpMethod.toString(),
+            method = servletRequest?.httpMethod.toString(),
             exceptionType = ex.javaClass.simpleName,
             userId = "",
-            errorLocation = getErrorLocaltion(ex)
+            errorLocation = getErrorLocaltion(ex),
+            userAgent = httpServletRequest?.getHeader("User-Agent") ?: "Unknown",
+            contentType = httpServletRequest?.contentType ?: "Unknown",
+            serverName = httpServletRequest?.serverName ?: "Unknown",
+            ip = httpServletRequest?.let { getClientIp(it) } ?: "Unknown"
         )
 
         errorLog(errorMessageDto.exceptionType, errorMessageDto.toString())
@@ -63,15 +76,22 @@ class GlobalExceptionControllerAdvice {
 
     @ExceptionHandler(UserNotFoundException::class)
     fun handleUserNotFoundException(ex: UserNotFoundException, request: WebRequest): ResponseEntity<String> {
+        val servletRequest = request as? ServletWebRequest
+        val httpServletRequest = servletRequest?.request
+
         val errorMessageDto = ErrorMessageDTO(
             status = HttpStatus.NOT_FOUND.value(),
             message = ex.message ?: "Invalid username",
-            path = (request as ServletWebRequest).request.requestURI,
+            path = servletRequest?.request?.requestURI,
             timestamp = OffsetDateTime.now(),
-            method = request.httpMethod.toString(),
+            method = servletRequest?.httpMethod.toString(),
             exceptionType = ex.javaClass.simpleName,
             userId = "",
-            errorLocation = getErrorLocaltion(ex)
+            errorLocation = getErrorLocaltion(ex),
+            userAgent = servletRequest?.getHeader("User-Agent") ?: "Unknown",
+            contentType = httpServletRequest?.contentType ?: "Unknown",
+            serverName = httpServletRequest?.serverName ?: "Unknown",
+            ip = httpServletRequest?.let { getClientIp(it) } ?: "Unknown"
         )
 
         errorLog(errorMessageDto.exceptionType, errorMessageDto.toString())
@@ -81,15 +101,22 @@ class GlobalExceptionControllerAdvice {
 
     @ExceptionHandler(RoleAlreadyExistsException::class)
     fun handleRoleAlreadyExistsException(ex: RoleAlreadyExistsException, request: WebRequest): ResponseEntity<String> {
+        val servletRequest = request as? ServletWebRequest
+        val httpServletRequest = servletRequest?.request
+
         val errorMessageDto = ErrorMessageDTO(
             status = HttpStatus.BAD_REQUEST.value(),
             message = ex.message ?: "Invalid rolename",
-            path = (request as ServletWebRequest).request.requestURI,
+            path = servletRequest?.request?.requestURI,
             timestamp = OffsetDateTime.now(),
-            method = request.httpMethod.toString(),
+            method = servletRequest?.httpMethod.toString(),
             exceptionType = ex.javaClass.simpleName,
             userId = "",
-            errorLocation = getErrorLocaltion(ex)
+            errorLocation = getErrorLocaltion(ex),
+            userAgent = servletRequest?.getHeader("User-Agent") ?: "Unknown",
+            contentType = httpServletRequest?.contentType ?: "Unknown",
+            serverName = httpServletRequest?.serverName ?: "Unknown",
+            ip = httpServletRequest?.let { getClientIp(it) } ?: "Unknown"
         )
 
         errorLog(errorMessageDto.exceptionType, errorMessageDto.toString())
@@ -99,15 +126,22 @@ class GlobalExceptionControllerAdvice {
 
     @ExceptionHandler(AppNotFoundException::class)
     fun handleAppNotFoundException(exception: AppNotFoundException, request: WebRequest): ResponseEntity<String> {
+        val servletRequest = request as? ServletWebRequest
+        val httpServletRequest = servletRequest?.request
+
         val errorMessageDto = ErrorMessageDTO(
             status = HttpStatus.NOT_FOUND.value(),
             message = exception.message ?: "Invalid rolename",
-            path = (request as ServletWebRequest).request.requestURI,
+            path = servletRequest?.request?.requestURI,
             timestamp = OffsetDateTime.now(),
-            method = request.httpMethod.toString(),
+            method = servletRequest?.httpMethod.toString(),
             exceptionType = exception.javaClass.simpleName,
             userId = "",
-            errorLocation = getErrorLocaltion(exception)
+            errorLocation = getErrorLocaltion(exception),
+            userAgent = request.getHeader("User-Agent") ?: "Unknown",
+            contentType = httpServletRequest?.contentType ?: "Unknown",
+            serverName = httpServletRequest?.serverName ?: "Unknown",
+            ip = httpServletRequest?.let { getClientIp(it) } ?: "Unknown"
         )
 
         errorLog(errorMessageDto.exceptionType, errorMessageDto.toString())
@@ -123,5 +157,23 @@ class GlobalExceptionControllerAdvice {
         return ex.stackTrace.firstOrNull()?.let {
             "${it.className}.${it.methodName}(${it.fileName}:${it.lineNumber})"
         }
+    }
+
+    private fun getClientIp(request: HttpServletRequest): String {
+        val headers = listOf(
+            "X-Forwarded-For", "Proxy-Client-IP", "WL-Proxy-Client-IP",
+            "HTTP_X_FORWARDED_FOR", "HTTP_X_FORWARDED", "HTTP_X_CLUSTER_CLIENT_IP",
+            "HTTP_CLIENT_IP", "HTTP_FORWARDED_FOR", "HTTP_FORWARDED", "REMOTE_ADDR"
+        )
+
+        for (header in headers) {
+            val ipList = request.getHeader(header)
+            if (!ipList.isNullOrBlank()) {
+                val ip = ipList.split(",").first().trim()
+                return if (ip == "0:0:0:0:0:0:0:1") "127.0.0.1" else ip
+            }
+        }
+        val remoteAddr = request.remoteAddr
+        return if (remoteAddr == "0:0:0:0:0:0:0:1") "127.0.0.1" else remoteAddr
     }
 }
