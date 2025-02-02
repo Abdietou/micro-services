@@ -3,6 +3,7 @@ package org.devabdi.secservice.exceptions
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.devabdi.secservice.config.JacksonConfig
 import org.devabdi.secservice.dto.ErrorMessageDTO
+import org.devabdi.secservice.exceptions.application.AppNotFoundException
 import org.devabdi.secservice.exceptions.role.RoleAlreadyExistsException
 import org.devabdi.secservice.exceptions.user.UserAlreadyExistsException
 import org.devabdi.secservice.exceptions.user.UserNotFoundException
@@ -94,6 +95,24 @@ class GlobalExceptionControllerAdvice {
         errorLog(errorMessageDto.exceptionType, errorMessageDto.toString())
         val jsonErrorMessage = objectMapper.writeValueAsString(errorMessageDto)
         return ResponseEntity(jsonErrorMessage, HttpStatus.BAD_REQUEST)
+    }
+
+    @ExceptionHandler(AppNotFoundException::class)
+    fun handleAppNotFoundException(exception: AppNotFoundException, request: WebRequest): ResponseEntity<String> {
+        val errorMessageDto = ErrorMessageDTO(
+            status = HttpStatus.NOT_FOUND.value(),
+            message = exception.message ?: "Invalid rolename",
+            path = (request as ServletWebRequest).request.requestURI,
+            timestamp = OffsetDateTime.now(),
+            method = request.httpMethod.toString(),
+            exceptionType = exception.javaClass.simpleName,
+            userId = "",
+            errorLocation = getErrorLocaltion(exception)
+        )
+
+        errorLog(errorMessageDto.exceptionType, errorMessageDto.toString())
+        val jsonErrorMessage = objectMapper.writeValueAsString(errorMessageDto)
+        return ResponseEntity(jsonErrorMessage, HttpStatus.NOT_FOUND)
     }
 
     private fun errorLog(exceptionType: String, errorDetails: String) {

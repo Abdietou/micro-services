@@ -15,6 +15,7 @@ class SecConstants {
         const val SAVE_USER_URI = "account/user/save"
         const val SAVE_ROLE_URI = "account/role/save"
         const val SAVE_APPLICATION_URI = "account/application/save"
+        const val GET_APPLICATION_URI_BY_ID = "account/application"
         const val ADD_ROLE_TO_USER_URI = "account/user/addRole"
         const val ADD_APPLICATION_TO_USER_URI = "account/user/addApplication"
 
