@@ -2,9 +2,13 @@ package org.devabdi.secservice.entites
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import jakarta.persistence.Entity
+import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.JoinTable
+import jakarta.persistence.ManyToMany
 import jakarta.persistence.Table
 import org.devabdi.secservice.utils.SecConstants
 import org.hibernate.annotations.CreationTimestamp
@@ -53,6 +57,15 @@ class User(
         set(value) {
             field = trimAndUppercase(value)
         }
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = SecConstants.SEC_USER_ROLES_NAME,
+        schema = SecConstants.SEC_SCHEMA,
+        joinColumns = [JoinColumn(name = "app_user_id")],
+        inverseJoinColumns = [JoinColumn(name = "app_role_id")]
+    )
+    var roles: MutableList<Role> = mutableListOf()
 
     private fun trimAndUppercase(value: String): String = value.trim().replaceFirstChar { it.uppercaseChar() }
 }

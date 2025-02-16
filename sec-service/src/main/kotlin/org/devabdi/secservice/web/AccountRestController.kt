@@ -4,6 +4,7 @@ import jakarta.validation.Valid
 import org.devabdi.secservice.dto.AddRoleRequestDTO
 import org.devabdi.secservice.dto.FindByIdRequestDTO
 import org.devabdi.secservice.dto.FindUserByUsernameRequestDTO
+import org.devabdi.secservice.dto.RoleUserFormDTO
 import org.devabdi.secservice.dto.SignUpDTO
 import org.devabdi.secservice.entites.User
 import org.devabdi.secservice.service.AccountService
@@ -46,6 +47,15 @@ class AccountRestController(private val accountService: AccountService) {
         accountService.addNewRole(addRoleRequestDTO)
         return ResponseEntity(
             "The role '${addRoleRequestDTO.roleName}' has been successfully added !",
+            HttpStatus.CREATED
+        )
+    }
+
+    @PostMapping(SecConstants.ADD_ROLE_TO_USER_URI)
+    fun addRoleToUser(@RequestBody @Valid roleUserFormDTO: RoleUserFormDTO): ResponseEntity<String> {
+        accountService.addRoleToUser(roleUserFormDTO)
+        return ResponseEntity(
+            "The role '${roleUserFormDTO.rolename}' has been assigned to the user '${roleUserFormDTO.username}'",
             HttpStatus.CREATED
         )
     }

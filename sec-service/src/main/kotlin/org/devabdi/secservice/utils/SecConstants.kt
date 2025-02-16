@@ -22,6 +22,7 @@ class SecConstants {
         // DATABASE
         const val SEC_SCHEMA = "sso"
         private const val SEC_USER_TABLE_NAME = "app_user"
+        const val SEC_USER_ROLES_NAME = "app_user_app_roles"
         const val SEC_USER_SCHEMA_TABLE = "$SEC_SCHEMA.$SEC_USER_TABLE_NAME"
     }
 }

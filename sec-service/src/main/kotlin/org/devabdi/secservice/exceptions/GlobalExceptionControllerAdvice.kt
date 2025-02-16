@@ -4,7 +4,9 @@ import jakarta.servlet.http.HttpServletRequest
 import org.devabdi.secservice.config.JacksonConfig
 import org.devabdi.secservice.dto.ErrorMessageDTO
 import org.devabdi.secservice.exceptions.application.AppNotFoundException
+import org.devabdi.secservice.exceptions.role.DuplicateRoleException
 import org.devabdi.secservice.exceptions.role.RoleAlreadyExistsException
+import org.devabdi.secservice.exceptions.role.RoleNotFoundException
 import org.devabdi.secservice.exceptions.user.UserAlreadyExistsException
 import org.devabdi.secservice.exceptions.user.UserNotFoundException
 import org.slf4j.Logger
@@ -122,6 +124,56 @@ class GlobalExceptionControllerAdvice {
         errorLog(errorMessageDto.exceptionType, errorMessageDto.toString())
         val jsonErrorMessage = objectMapper.writeValueAsString(errorMessageDto)
         return ResponseEntity(jsonErrorMessage, HttpStatus.BAD_REQUEST)
+    }
+
+    @ExceptionHandler(DuplicateRoleException::class)
+    fun handleRoleAlreadyExistsException(ex: DuplicateRoleException, request: WebRequest): ResponseEntity<String> {
+        val servletRequest = request as? ServletWebRequest
+        val httpServletRequest = servletRequest?.request
+
+        val errorMessageDto = ErrorMessageDTO(
+            status = HttpStatus.BAD_REQUEST.value(),
+            message = ex.message ?: "Invalid rolename",
+            path = servletRequest?.request?.requestURI,
+            timestamp = OffsetDateTime.now(),
+            method = servletRequest?.httpMethod.toString(),
+            exceptionType = ex.javaClass.simpleName,
+            userId = "",
+            errorLocation = getErrorLocaltion(ex),
+            userAgent = servletRequest?.getHeader("User-Agent") ?: "Unknown",
+            contentType = httpServletRequest?.contentType ?: "Unknown",
+            serverName = httpServletRequest?.serverName ?: "Unknown",
+            ip = httpServletRequest?.let { getClientIp(it) } ?: "Unknown"
+        )
+
+        errorLog(errorMessageDto.exceptionType, errorMessageDto.toString())
+        val jsonErrorMessage = objectMapper.writeValueAsString(errorMessageDto)
+        return ResponseEntity(jsonErrorMessage, HttpStatus.BAD_REQUEST)
+    }
+
+    @ExceptionHandler(RoleNotFoundException::class)
+    fun handleRoleNotFoundException(ex: RoleNotFoundException, request: WebRequest): ResponseEntity<String> {
+        val servletRequest = request as? ServletWebRequest
+        val httpServletRequest = servletRequest?.request
+
+        val errorMessageDto = ErrorMessageDTO(
+            status = HttpStatus.NOT_FOUND.value(),
+            message = ex.message ?: "Invalid rolename",
+            path = servletRequest?.request?.requestURI,
+            timestamp = OffsetDateTime.now(),
+            method = servletRequest?.httpMethod.toString(),
+            exceptionType = ex.javaClass.simpleName,
+            userId = "",
+            errorLocation = getErrorLocaltion(ex),
+            userAgent = servletRequest?.getHeader("User-Agent") ?: "Unknown",
+            contentType = httpServletRequest?.contentType ?: "Unknown",
+            serverName = httpServletRequest?.serverName ?: "Unknown",
+            ip = httpServletRequest?.let { getClientIp(it) } ?: "Unknown"
+        )
+
+        errorLog(errorMessageDto.exceptionType, errorMessageDto.toString())
+        val jsonErrorMessage = objectMapper.writeValueAsString(errorMessageDto)
+        return ResponseEntity(jsonErrorMessage, HttpStatus.NOT_FOUND)
     }
 
     @ExceptionHandler(AppNotFoundException::class)

@@ -1,10 +1,13 @@
 package org.devabdi.secservice.service.impl
 
 import org.devabdi.secservice.dto.AddRoleRequestDTO
+import org.devabdi.secservice.dto.RoleUserFormDTO
 import org.devabdi.secservice.dto.SignUpDTO
 import org.devabdi.secservice.entites.Role
 import org.devabdi.secservice.entites.User
+import org.devabdi.secservice.exceptions.role.DuplicateRoleException
 import org.devabdi.secservice.exceptions.role.RoleAlreadyExistsException
+import org.devabdi.secservice.exceptions.role.RoleNotFoundException
 import org.devabdi.secservice.exceptions.user.UserAlreadyExistsException
 import org.devabdi.secservice.exceptions.user.UserNotFoundException
 import org.devabdi.secservice.repo.AppRoleRepository
@@ -55,6 +58,20 @@ class AccountServiceImpl(
         }
 
         return appRoleRepository.save(role)
+    }
+
+    override fun addRoleToUser(roleUserFormDTO: RoleUserFormDTO) {
+        val user = appUserRepository.findByUsername(roleUserFormDTO.username)
+            ?: throw UserNotFoundException("The user '${roleUserFormDTO.username}' has not been found")
+
+        val role = appRoleRepository.findByRoleName(roleUserFormDTO.rolename)
+            ?: throw RoleNotFoundException("The role '${roleUserFormDTO.rolename}' has not been found")
+
+        if (user.roles.any { it.roleName == role.roleName }) {
+            throw DuplicateRoleException("The user '${roleUserFormDTO.username}' has already the role '${roleUserFormDTO.rolename}' ")
+        }
+
+        user.roles.add(role)
     }
 
 }

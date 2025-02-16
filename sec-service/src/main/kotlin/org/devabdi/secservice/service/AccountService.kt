@@ -1,6 +1,7 @@
 package org.devabdi.secservice.service
 
 import org.devabdi.secservice.dto.AddRoleRequestDTO
+import org.devabdi.secservice.dto.RoleUserFormDTO
 import org.devabdi.secservice.dto.SignUpDTO
 import org.devabdi.secservice.entites.Role
 import org.devabdi.secservice.entites.User
@@ -11,4 +12,5 @@ interface AccountService {
     fun getAllUsers(): List<User>?
     fun addNewUser(signUpDto: SignUpDTO): User?
     fun addNewRole(addRoleRequestDto: AddRoleRequestDTO): Role?
+    fun addRoleToUser(roleUserFormDTO: RoleUserFormDTO)
 }
