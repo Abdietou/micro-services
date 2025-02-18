@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest
 import org.devabdi.secservice.config.JacksonConfig
 import org.devabdi.secservice.dto.ErrorMessageDTO
 import org.devabdi.secservice.exceptions.application.AppNotFoundException
+import org.devabdi.secservice.exceptions.application.DuplicateAppException
 import org.devabdi.secservice.exceptions.role.DuplicateRoleException
 import org.devabdi.secservice.exceptions.role.RoleAlreadyExistsException
 import org.devabdi.secservice.exceptions.role.RoleNotFoundException
@@ -183,7 +184,7 @@ class GlobalExceptionControllerAdvice {
 
         val errorMessageDto = ErrorMessageDTO(
             status = HttpStatus.NOT_FOUND.value(),
-            message = exception.message ?: "Invalid rolename",
+            message = exception.message ?: "Invalid app name",
             path = servletRequest?.request?.requestURI,
             timestamp = OffsetDateTime.now(),
             method = servletRequest?.httpMethod.toString(),
@@ -199,6 +200,31 @@ class GlobalExceptionControllerAdvice {
         errorLog(errorMessageDto.exceptionType, errorMessageDto.toString())
         val jsonErrorMessage = objectMapper.writeValueAsString(errorMessageDto)
         return ResponseEntity(jsonErrorMessage, HttpStatus.NOT_FOUND)
+    }
+
+    @ExceptionHandler(DuplicateAppException::class)
+    fun handleAppAlreadyExistsException(ex: DuplicateAppException, request: WebRequest): ResponseEntity<String> {
+        val servletRequest = request as? ServletWebRequest
+        val httpServletRequest = servletRequest?.request
+
+        val errorMessageDto = ErrorMessageDTO(
+            status = HttpStatus.BAD_REQUEST.value(),
+            message = ex.message ?: "Invalid app name",
+            path = servletRequest?.request?.requestURI,
+            timestamp = OffsetDateTime.now(),
+            method = servletRequest?.httpMethod.toString(),
+            exceptionType = ex.javaClass.simpleName,
+            userId = "",
+            errorLocation = getErrorLocaltion(ex),
+            userAgent = servletRequest?.getHeader("User-Agent") ?: "Unknown",
+            contentType = httpServletRequest?.contentType ?: "Unknown",
+            serverName = httpServletRequest?.serverName ?: "Unknown",
+            ip = httpServletRequest?.let { getClientIp(it) } ?: "Unknown"
+        )
+
+        errorLog(errorMessageDto.exceptionType, errorMessageDto.toString())
+        val jsonErrorMessage = objectMapper.writeValueAsString(errorMessageDto)
+        return ResponseEntity(jsonErrorMessage, HttpStatus.BAD_REQUEST)
     }
 
     private fun errorLog(exceptionType: String, errorDetails: String) {

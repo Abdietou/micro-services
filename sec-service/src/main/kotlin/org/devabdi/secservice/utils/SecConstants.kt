@@ -17,12 +17,14 @@ class SecConstants {
         const val SAVE_APPLICATION_URI = "account/application/save"
         const val GET_APPLICATION_URI_BY_ID = "account/application"
         const val ADD_ROLE_TO_USER_URI = "account/user/addRole"
+        const val ADD_APP_TO_USER_URI = "account/user/addApplication"
         const val ADD_APPLICATION_TO_USER_URI = "account/user/addApplication"
 
         // DATABASE
         const val SEC_SCHEMA = "sso"
         private const val SEC_USER_TABLE_NAME = "app_user"
         const val SEC_USER_ROLES_NAME = "app_user_app_roles"
+        const val SEC_USER_APPS_NAME = "app_user_application"
         const val SEC_USER_SCHEMA_TABLE = "$SEC_SCHEMA.$SEC_USER_TABLE_NAME"
     }
 }

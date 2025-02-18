@@ -67,5 +67,14 @@ class User(
     )
     var roles: MutableList<Role> = mutableListOf()
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = SecConstants.SEC_USER_APPS_NAME,
+        schema = SecConstants.SEC_SCHEMA,
+        joinColumns = [JoinColumn(name = "app_user_id")],
+        inverseJoinColumns = [JoinColumn(name = "app_id")]
+    )
+    var applications: MutableList<Application> = mutableListOf()
+
     private fun trimAndUppercase(value: String): String = value.trim().replaceFirstChar { it.uppercaseChar() }
 }

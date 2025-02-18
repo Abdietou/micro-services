@@ -2,6 +2,7 @@ package org.devabdi.secservice.web
 
 import jakarta.validation.Valid
 import org.devabdi.secservice.dto.AddApplicationDTO
+import org.devabdi.secservice.dto.ApplicationUserFormDTO
 import org.devabdi.secservice.dto.FindByIdRequestDTO
 import org.devabdi.secservice.entites.Application
 import org.devabdi.secservice.service.ApplicationService
@@ -28,6 +29,15 @@ class ApplicationRestController(private val applicationService: ApplicationServi
         applicationService.addNewApplicationName(addApplicationDTO)
         return ResponseEntity(
             "The application name '${addApplicationDTO.name}' has been successfully added !",
+            HttpStatus.CREATED
+        )
+    }
+
+    @PostMapping(SecConstants.ADD_APP_TO_USER_URI)
+    fun addApplicationToUser(@RequestBody @Valid applicationUserFormDTO: ApplicationUserFormDTO): ResponseEntity<String> {
+        applicationService.addAppToUser(applicationUserFormDTO)
+        return ResponseEntity(
+            "The application '${applicationUserFormDTO.applicationName}' has been successfully assigned to the user '${applicationUserFormDTO.username}'.",
             HttpStatus.CREATED
         )
     }
