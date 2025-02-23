@@ -8,7 +8,7 @@ import jakarta.persistence.Table
 import org.devabdi.secservice.utils.SecConstants
 
 @Entity
-@Table(name = "application", schema = SecConstants.SEC_SCHEMA)
+@Table(name = "application")
 class Application(
     name: String = ""
 ) {
