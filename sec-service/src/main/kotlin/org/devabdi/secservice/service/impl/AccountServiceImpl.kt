@@ -74,4 +74,48 @@ class AccountServiceImpl(
         user.roles.add(role)
     }
 
+    override fun deleteUserById(id: Long) {
+        appUserRepository.findById(id).orElseThrow {
+            UserNotFoundException("The user with the '${id}' has not been found")
+        }
+        appUserRepository.deleteById(id)
+    }
+
+    override fun deleteRoleById(id: Long) {
+        val role = appRoleRepository.findById(id).orElseThrow {
+            RoleNotFoundException("The role with the '${id}' has not been found")
+        }
+
+        val usersWithRole = appUserRepository.findAllByRoleIdQuery(id)
+        usersWithRole?.forEach { user ->
+            user.roles.remove(role)
+            appUserRepository.save(user)
+        }
+
+        appRoleRepository.deleteById(id)
+    }
+
+    override fun deleteUserRole(roleUserFormDTO: RoleUserFormDTO) {
+        val role = appRoleRepository.findByRoleName(roleUserFormDTO.rolename)
+            ?: throw RoleNotFoundException("The role '${roleUserFormDTO.rolename}' has not been found")
+
+        val user = appUserRepository.findByUsername(roleUserFormDTO.username)
+            ?: throw UserNotFoundException("The user '${roleUserFormDTO.username}' has not been found")
+
+        if (user.roles.none { it.roleName == role.roleName }) {
+            throw RoleNotFoundException("The user '${roleUserFormDTO.username}' does not have the role '${roleUserFormDTO.rolename}' to remove.")
+        }
+
+        val toRemove = mutableListOf<Role>()
+        for (roleUser in user.roles) {
+            if (roleUser.id == role.id) {
+                toRemove.add(role)
+                break
+            }
+        }
+
+        user.roles.removeAll(toRemove)
+        appUserRepository.save(user)
+    }
+
 }

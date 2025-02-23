@@ -9,6 +9,7 @@ import org.devabdi.secservice.service.ApplicationService
 import org.devabdi.secservice.utils.SecConstants
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -39,6 +40,24 @@ class ApplicationRestController(private val applicationService: ApplicationServi
         return ResponseEntity(
             "The application '${applicationUserFormDTO.applicationName}' has been successfully assigned to the user '${applicationUserFormDTO.username}'.",
             HttpStatus.CREATED
+        )
+    }
+
+    @DeleteMapping(SecConstants.DELETE_APP_URI)
+    fun deleteAppById(@RequestBody @Valid findByIdRequestDTO: FindByIdRequestDTO): ResponseEntity<String> {
+        applicationService.deleteAppById(findByIdRequestDTO.id)
+        return ResponseEntity(
+            "The application '${findByIdRequestDTO.id}' has been successfully deleted !",
+            HttpStatus.CREATED
+        )
+    }
+
+    @DeleteMapping(SecConstants.DELETE_USER_APP_URI)
+    fun deleteUserApp(@RequestBody @Valid applicationUserFormDTO: ApplicationUserFormDTO): ResponseEntity<String> {
+        applicationService.deleteUserApp(applicationUserFormDTO)
+        return ResponseEntity(
+            "The application '${applicationUserFormDTO.applicationName}' has been successfully deleted for the user '${applicationUserFormDTO.username}'!",
+            HttpStatus.OK
         )
     }
 }

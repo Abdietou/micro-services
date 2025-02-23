@@ -13,4 +13,7 @@ interface AccountService {
     fun addNewUser(signUpDto: SignUpDTO): User?
     fun addNewRole(addRoleRequestDto: AddRoleRequestDTO): Role?
     fun addRoleToUser(roleUserFormDTO: RoleUserFormDTO)
+    fun deleteUserById(id: Long)
+    fun deleteRoleById(id: Long)
+    fun deleteUserRole(roleUserFormDTO: RoleUserFormDTO)
 }

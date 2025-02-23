@@ -13,18 +13,24 @@ class SecConstants {
         const val GET_USER_BY_ID_URI = "account/user/by-id"
         const val GET_ALL_USERS_URI = "account/users"
         const val SAVE_USER_URI = "account/user/save"
+        const val DELETE_USER_URI = "account/user/delete"
+        const val DELETE_ROLE_URI = "account/role/delete"
+        const val DELETE_APP_URI = "account/application/delete"
+        const val DELETE_USER_ROLE_URI = "account/user/deleteRole"
+        const val DELETE_USER_APP_URI = "account/application/deleteApp"
         const val SAVE_ROLE_URI = "account/role/save"
         const val SAVE_APPLICATION_URI = "account/application/save"
         const val GET_APPLICATION_URI_BY_ID = "account/application"
         const val ADD_ROLE_TO_USER_URI = "account/user/addRole"
         const val ADD_APP_TO_USER_URI = "account/user/addApplication"
-        const val ADD_APPLICATION_TO_USER_URI = "account/user/addApplication"
 
         // DATABASE
-        const val SEC_SCHEMA = "sso"
+        private const val SEC_SCHEMA = "sso"
         private const val SEC_USER_TABLE_NAME = "app_user"
         const val SEC_USER_ROLES_NAME = "app_user_app_roles"
         const val SEC_USER_APPS_NAME = "app_user_application"
         const val SEC_USER_SCHEMA_TABLE = "$SEC_SCHEMA.$SEC_USER_TABLE_NAME"
+        const val SEC_USER_ROLES_SCHEMA_NAME_TABLE = "$SEC_SCHEMA.$SEC_USER_ROLES_NAME"
+        const val SEC_USER_APPS_SCHEMA_NAME_TABLE = "$SEC_SCHEMA.$SEC_USER_APPS_NAME"
     }
 }

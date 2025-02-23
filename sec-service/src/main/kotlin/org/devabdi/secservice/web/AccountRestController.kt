@@ -11,6 +11,7 @@ import org.devabdi.secservice.service.AccountService
 import org.devabdi.secservice.utils.SecConstants
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -57,6 +58,33 @@ class AccountRestController(private val accountService: AccountService) {
         return ResponseEntity(
             "The role '${roleUserFormDTO.rolename}' has been assigned to the user '${roleUserFormDTO.username}'",
             HttpStatus.CREATED
+        )
+    }
+
+    @DeleteMapping(SecConstants.DELETE_USER_URI)
+    fun deleteUser(@RequestBody @Valid findByIdRequestDTO: FindByIdRequestDTO): ResponseEntity<String> {
+        accountService.deleteUserById(findByIdRequestDTO.id)
+        return ResponseEntity(
+            "The user '${findByIdRequestDTO.id}' has been successfully deleted !",
+            HttpStatus.OK
+        )
+    }
+
+    @DeleteMapping(SecConstants.DELETE_ROLE_URI)
+    fun deleteRole(@RequestBody @Valid findByIdRequestDTO: FindByIdRequestDTO): ResponseEntity<String> {
+        accountService.deleteRoleById(findByIdRequestDTO.id)
+        return ResponseEntity(
+            "The role '${findByIdRequestDTO.id}' has been successfully deleted !",
+            HttpStatus.OK
+        )
+    }
+
+    @DeleteMapping(SecConstants.DELETE_USER_ROLE_URI)
+    fun deleteUserRole(@RequestBody @Valid roleUserFormDTO: RoleUserFormDTO): ResponseEntity<String> {
+        accountService.deleteUserRole(roleUserFormDTO)
+        return ResponseEntity(
+            "The role '${roleUserFormDTO.rolename}' has been successfully deleted for the user '${roleUserFormDTO.username}'!",
+            HttpStatus.OK
         )
     }
 

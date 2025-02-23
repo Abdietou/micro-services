@@ -8,4 +8,6 @@ interface ApplicationService {
     fun getApplicationById(id: Long): Application?
     fun addNewApplicationName(addApplicationDTO: AddApplicationDTO): Application?
     fun addAppToUser(applicationUserFormDTO: ApplicationUserFormDTO)
+    fun deleteAppById(id: Long)
+    fun deleteUserApp(applicationUserFormDTO: ApplicationUserFormDTO)
 }

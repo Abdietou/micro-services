@@ -47,4 +47,40 @@ class ApplicationServiceImpl(
         user.applications.add(application)
     }
 
+    override fun deleteAppById(id: Long) {
+        val application = applicationRepository.findById(id).orElseThrow {
+            AppNotFoundException("The application with the '${id}' has not been found")
+        }
+
+        val usersWithApp = appUserRepository.findAllByAppIdQuery(id)
+        usersWithApp?.forEach { user ->
+            user.applications.remove(application)
+            appUserRepository.save(user)
+        }
+
+        applicationRepository.deleteById(id)
+    }
+
+    override fun deleteUserApp(applicationUserFormDTO: ApplicationUserFormDTO) {
+        val app = applicationRepository.findByName(applicationUserFormDTO.applicationName)
+            ?: throw AppNotFoundException("The application '${applicationUserFormDTO.applicationName}' has not been found")
+
+        val user = appUserRepository.findByUsername(applicationUserFormDTO.username)
+            ?: throw UserNotFoundException("The user '${applicationUserFormDTO.username}' has not been found")
+
+        if (user.applications.none { it.name == app.name }) {
+            throw AppNotFoundException("The user '${applicationUserFormDTO.username}' does not have the application '${applicationUserFormDTO.applicationName}' to remove.")
+        }
+
+        val toRemove = mutableListOf<Application>()
+        for (appUser in user.applications) {
+            if (appUser.id == app.id) {
+                toRemove.add(app)
+            }
+        }
+
+        user.applications.removeAll(toRemove)
+        appUserRepository.save(user)
+    }
+
 }
