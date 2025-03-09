@@ -39,6 +39,10 @@ class AccountServiceImpl(
         return appUserRepository.findAll()
     }
 
+    override fun getAllUsersActive(): List<User>? {
+        return appUserRepository.findByIsActiveTrue();
+    }
+
     override fun addNewUser(signUpDto: SignUpDTO): User? {
         appUserRepository.findByEmail(signUpDto.email)?.let {
             throw UserAlreadyExistsException("This account already exists. Please log in.")

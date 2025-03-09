@@ -12,6 +12,7 @@ class SecConstants {
         const val GET_USER_BY_USERNAME_URI = "account/user/by-username"
         const val GET_USER_BY_ID_URI = "account/user/by-id"
         const val GET_ALL_USERS_URI = "account/users"
+        const val GET_ALL_USERS_ATCIVE_URI = "account/usersActive"
         const val SAVE_USER_URI = "account/user/save"
         const val DELETE_USER_URI = "account/user/delete"
         const val DELETE_ROLE_URI = "account/role/delete"

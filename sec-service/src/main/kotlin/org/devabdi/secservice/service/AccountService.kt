@@ -10,6 +10,7 @@ interface AccountService {
     fun getUserById(id: Long): User?
     fun getUserByUsername(username: String): User?
     fun getAllUsers(): List<User>?
+    fun getAllUsersActive(): List<User>?
     fun addNewUser(signUpDto: SignUpDTO): User?
     fun addNewRole(addRoleRequestDto: AddRoleRequestDTO): Role?
     fun addRoleToUser(roleUserFormDTO: RoleUserFormDTO)

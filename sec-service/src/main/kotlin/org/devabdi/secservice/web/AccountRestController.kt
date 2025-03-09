@@ -27,6 +27,11 @@ class AccountRestController(private val accountService: AccountService) {
         return accountService.getAllUsers()
     }
 
+    @GetMapping(SecConstants.GET_ALL_USERS_ATCIVE_URI)
+    fun getAllUsersActive(): List<User>? {
+        return accountService.getAllUsersActive()
+    }
+
     @GetMapping(SecConstants.GET_USER_BY_ID_URI)
     fun getUserById(@RequestBody @Valid findByIdRequestDTO: FindByIdRequestDTO): User? {
         return accountService.getUserById(findByIdRequestDTO.id)
