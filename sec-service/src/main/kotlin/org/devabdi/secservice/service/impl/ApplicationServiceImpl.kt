@@ -37,7 +37,7 @@ class ApplicationServiceImpl(
         val user = appUserRepository.findByUsername(applicationUserFormDTO.username)
             ?: throw UserNotFoundException("The user '${applicationUserFormDTO.username}' has not been found")
 
-        val application = applicationRepository.findByName(applicationUserFormDTO.applicationName)
+        val application = applicationRepository.findByName(applicationUserFormDTO.applicationName.uppercase())
             ?: throw AppNotFoundException("The application named '${applicationUserFormDTO.applicationName}' has not been found")
 
         if (user.applications.any { it.name == application.name }) {

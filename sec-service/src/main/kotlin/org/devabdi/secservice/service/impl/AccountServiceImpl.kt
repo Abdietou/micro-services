@@ -68,7 +68,7 @@ class AccountServiceImpl(
         val user = appUserRepository.findByUsername(roleUserFormDTO.username)
             ?: throw UserNotFoundException("The user '${roleUserFormDTO.username}' has not been found")
 
-        val role = appRoleRepository.findByRoleName(roleUserFormDTO.rolename)
+        val role = appRoleRepository.findByRoleName(roleUserFormDTO.rolename.uppercase())
             ?: throw RoleNotFoundException("The role '${roleUserFormDTO.rolename}' has not been found")
 
         if (user.roles.any { it.roleName == role.roleName }) {
