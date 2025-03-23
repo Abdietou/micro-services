@@ -17,4 +17,5 @@ interface AccountService {
     fun deleteUserById(id: Long)
     fun deleteRoleById(id: Long)
     fun deleteUserRole(roleUserFormDTO: RoleUserFormDTO)
+    fun loadByUsername(email: String?): User?
 }

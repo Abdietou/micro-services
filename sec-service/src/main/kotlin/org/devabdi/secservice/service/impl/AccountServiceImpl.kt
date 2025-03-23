@@ -9,6 +9,7 @@ import org.devabdi.secservice.exceptions.role.DuplicateRoleException
 import org.devabdi.secservice.exceptions.role.RoleAlreadyExistsException
 import org.devabdi.secservice.exceptions.role.RoleNotFoundException
 import org.devabdi.secservice.exceptions.user.UserAlreadyExistsException
+import org.devabdi.secservice.exceptions.user.UserEmailException
 import org.devabdi.secservice.exceptions.user.UserNotFoundException
 import org.devabdi.secservice.repo.AppRoleRepository
 import org.devabdi.secservice.repo.AppUserRepository
@@ -40,7 +41,7 @@ class AccountServiceImpl(
     }
 
     override fun getAllUsersActive(): List<User>? {
-        return appUserRepository.findByIsActiveTrue();
+        return appUserRepository.findByIsActiveTrue()
     }
 
     override fun addNewUser(signUpDto: SignUpDTO): User? {
@@ -120,6 +121,10 @@ class AccountServiceImpl(
 
         user.roles.removeAll(toRemove)
         appUserRepository.save(user)
+    }
+
+    override fun loadByUsername(email: String?): User? {
+        return appUserRepository.findByEmail(email ?: throw UserEmailException("Email cannot be null"))
     }
 
 }
