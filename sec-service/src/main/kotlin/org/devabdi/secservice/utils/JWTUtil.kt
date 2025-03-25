@@ -62,9 +62,8 @@ object JWTUtil {
 
     fun isTokenValid(token: String): Boolean {
         val claims = getClaims(token) ?: throw IllegalArgumentException("Expiration not found in claims")
-        val expirationDate = claims.expiration
         val now = Date(System.currentTimeMillis())
-        return now.before(expirationDate);
+        return now.before(claims.expiration);
     }
 
     private fun getExpireAccessToken(): Long {
